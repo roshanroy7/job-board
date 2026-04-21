@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const jobs = [
   {
@@ -40,17 +41,22 @@ const jobs = [
 ]
 
 function JobCard({ job }) {
+  const navigate = useNavigate()
+
   return (
-    <div style={{
-      background: "#fff",
-      border: "1px solid #e5e7eb",
-      borderRadius: "12px",
-      padding: "20px 24px",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
-      gap: "16px",
-    }}>
+    <div
+      onClick={() => navigate(`/job/${job.id}`)}
+      style={{
+        background: "#fff",
+        border: "1px solid #e5e7eb",
+        borderRadius: "12px",
+        padding: "20px 24px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: "16px",
+        cursor: "pointer",
+      }}>
       <div>
         <h2 style={{ fontSize: "16px", fontWeight: "600", color: "#111", marginBottom: "4px" }}>
           {job.title}
@@ -71,11 +77,13 @@ function JobCard({ job }) {
       </div>
       <div style={{ textAlign: "right", flexShrink: 0 }}>
         <p style={{ fontSize: "12px", color: "#9ca3af", marginBottom: "10px" }}>{job.posted}</p>
-        <button style={{
-          background: "#111", color: "#fff", border: "none",
-          borderRadius: "8px", padding: "8px 16px", fontSize: "13px",
-          cursor: "pointer", fontWeight: "500"
-        }}>Apply</button>
+        <button
+          onClick={e => { e.stopPropagation(); navigate(`/job/${job.id}`) }}
+          style={{
+            background: "#111", color: "#fff", border: "none",
+            borderRadius: "8px", padding: "8px 16px", fontSize: "13px",
+            cursor: "pointer", fontWeight: "500"
+          }}>Apply</button>
       </div>
     </div>
   )
