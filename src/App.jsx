@@ -89,7 +89,7 @@ export default function App() {
   const [filter, setFilter] = useState("All")
 
   useEffect(() => {
-    fetch("https://job-board-production-681d.up.railway.app/api/jobs")
+    fetch("https://job-board-production-9425.up.railway.app/api/jobs")
       .then(res => res.json())
       .then(data => { setJobs(data); setLoading(false) })
   }, [])

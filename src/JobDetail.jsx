@@ -8,7 +8,7 @@ export default function JobDetail() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetch(`https://job-board-production-681d.up.railway.app/api/jobs/${id}`)
+        fetch(`https://job-board-production-9425.up.railway.app/api/jobs/${id}`)
             .then(res => res.json())
             .then(data => { setJob(data); setLoading(false) })
     }, [id])
