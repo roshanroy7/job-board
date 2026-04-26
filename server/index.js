@@ -1,4 +1,5 @@
 const express = require("express")
+const { Pool } = require("pg")
 
 const app = express()
 
@@ -10,61 +11,31 @@ app.use((req, res, next) => {
 
 app.use(express.json())
 
-const jobs = [
-    {
-        id: 1,
-        title: "Frontend Developer",
-        company: "Stripe",
-        location: "Dublin, Ireland",
-        type: "Full-time",
-        salary: "€65,000 – €80,000",
-        posted: "2 days ago",
-        description: "We are looking for a talented Frontend Developer to join our team at Stripe.",
-        requirements: ["2+ years of experience with React", "Strong understanding of HTML, CSS, JavaScript", "Experience with REST APIs"],
-    },
-    {
-        id: 2,
-        title: "Backend Engineer",
-        company: "Shopify",
-        location: "Remote",
-        type: "Full-time",
-        salary: "€70,000 – €90,000",
-        posted: "1 day ago",
-        description: "Join Shopify as a Backend Engineer and help power the platform that millions of merchants rely on.",
-        requirements: ["3+ years of backend development experience", "Proficiency in Node.js or Python", "Experience with PostgreSQL"],
-    },
-    {
-        id: 3,
-        title: "React Developer",
-        company: "HubSpot",
-        location: "Dublin, Ireland",
-        type: "Contract",
-        salary: "€50,000 – €60,000",
-        posted: "3 days ago",
-        description: "HubSpot is looking for a React Developer on a contract basis.",
-        requirements: ["Strong React and JavaScript skills", "Experience with component libraries", "Good communication skills"],
-    },
-    {
-        id: 4,
-        title: "Junior Software Engineer",
-        company: "Intercom",
-        location: "Dublin, Ireland",
-        type: "Full-time",
-        salary: "€45,000 – €55,000",
-        posted: "Today",
-        description: "Intercom is hiring a Junior Software Engineer to join our growing engineering team.",
-        requirements: ["Some experience with JavaScript", "Eagerness to learn and grow", "Familiarity with Git"],
-    },
-]
-
-app.get("/api/jobs", (req, res) => {
-    res.json(jobs)
+const pool = new Pool({
+    database: "jobboard",
+    host: "localhost",
+    port: 5432,
 })
 
-app.get("/api/jobs/:id", (req, res) => {
-    const job = jobs.find(j => j.id === parseInt(req.params.id))
-    if (!job) return res.status(404).json({ message: "Job not found" })
-    res.json(job)
+app.get("/api/jobs", async (req, res) => {
+    try {
+        const result = await pool.query("SELECT * FROM jobs")
+        res.json(result.rows)
+    } catch (err) {
+        console.error("DB ERROR:", err.message)
+        res.status(500).json({ error: err.message })
+    }
+})
+
+app.get("/api/jobs/:id", async (req, res) => {
+    try {
+        const result = await pool.query("SELECT * FROM jobs WHERE id = $1", [req.params.id])
+        if (result.rows.length === 0) return res.status(404).json({ message: "Job not found" })
+        res.json(result.rows[0])
+    } catch (err) {
+        console.error("DB ERROR:", err.message)
+        res.status(500).json({ error: err.message })
+    }
 })
 
 app.listen(3001, () => {
