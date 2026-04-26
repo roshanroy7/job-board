@@ -39,16 +39,16 @@ A complete web application with:
 
 ---
 
-## Project Structure 
-job-board/
-├── src/                    # Frontend React code
-│   ├── App.jsx             # Main page - job listings + search
-│   ├── JobDetail.jsx       # Individual job detail page
-│   └── main.jsx            # Entry point - sets up routing
-├── server/                 # Backend Node.js code
-│   ├── index.js            # Express server + API routes
-│   └── package.json        # Backend dependencies
-└── package.json            # Frontend dependencies
+## Project Structure
+
+| File/Folder | Purpose |
+|-------------|---------|
+| `src/App.jsx` | Main page — job listings and search |
+| `src/JobDetail.jsx` | Individual job detail page |
+| `src/main.jsx` | Entry point — sets up routing |
+| `server/index.js` | Express server and API routes |
+| `server/package.json` | Backend dependencies |
+| `package.json` | Frontend dependencies |
 
 ---
 
@@ -69,7 +69,7 @@ The backend is a **REST API** — a server that responds to requests with data.
 - **CORS** is enabled so the frontend (on a different domain) is allowed to talk to the backend.
 
 ### Database (PostgreSQL)
-The database stores all job data in a table called `jobs` with these columns:
+The database stores all job data in a table called `jobs`.
 
 | Column | Type | Example |
 |--------|------|---------|
@@ -79,9 +79,8 @@ The database stores all job data in a table called `jobs` with these columns:
 | location | text | "Dublin, Ireland" |
 | type | text | "Full-time" |
 | salary | text | "€65,000 – €80,000" |
-| posted | text | "2 days ago" |
 | description | text | "We are looking for..." |
-| requirements | text[] | ["React", "JavaScript"] |
+| requirements | text array | ["React", "JavaScript"] |
 
 ---
 
@@ -95,13 +94,13 @@ useEffect(() => {
     .then(data => setJobs(data))
 }, [])
 ```
-`useEffect` runs code after the page loads. The empty `[]` at the end means "only run this once". Here it fetches jobs from the API when the page first opens.
+Runs code after the page loads. The empty `[]` means run only once. Here it fetches jobs from the API when the page first opens.
 
 ### useState
 ```jsx
 const [jobs, setJobs] = useState([])
 ```
-`useState` lets React remember data. `jobs` holds the list of jobs. `setJobs` updates it. When it updates, the page automatically re-renders.
+Lets React remember data. `jobs` holds the list. `setJobs` updates it. When it updates, the page automatically re-renders.
 
 ### REST API
 ```javascript
@@ -110,7 +109,7 @@ app.get("/api/jobs", async (req, res) => {
   res.json(result.rows)
 })
 ```
-This is an API endpoint. When something visits `/api/jobs`, the server runs a SQL query to get all jobs from the database and sends them back as JSON.
+When something visits `/api/jobs`, the server runs a SQL query and sends the results back as JSON.
 
 ### React Router
 ```jsx
@@ -119,45 +118,23 @@ This is an API endpoint. When something visits `/api/jobs`, the server runs a SQ
   <Route path="/job/:id" element={<JobDetail />} />
 </Routes>
 ```
-React Router decides which page to show based on the URL. `/` shows the job listings. `/job/1` shows the detail page for job with ID 1.
+Decides which page to show based on the URL.
 
 ---
 
 ## Running Locally
-
-### Prerequisites
-- Node.js installed
-- PostgreSQL installed
 
 ### Frontend
 ```bash
 npm install
 npm run dev
 ```
-Opens at http://localhost:5173
 
 ### Backend
 ```bash
 cd server
 npm install
 node index.js
-```
-Runs at http://localhost:3001
-
-### Database
-Create a PostgreSQL database called `jobboard` and run:
-```sql
-CREATE TABLE jobs (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(255),
-  company VARCHAR(255),
-  location VARCHAR(255),
-  type VARCHAR(100),
-  salary VARCHAR(100),
-  posted VARCHAR(100),
-  description TEXT,
-  requirements TEXT[]
-);
 ```
 
 ---
@@ -176,4 +153,4 @@ CREATE TABLE jobs (
 ## Author
 
 **Roshan Roy** — [@roshanroy7]
-(https://github.com/roshanroy7)
+(https://github.com/roshanroy7) 
