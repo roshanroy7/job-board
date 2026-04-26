@@ -12,9 +12,8 @@ app.use((req, res, next) => {
 app.use(express.json())
 
 const pool = new Pool({
-    database: "jobboard",
-    host: "localhost",
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 })
 
 app.get("/api/jobs", async (req, res) => {
