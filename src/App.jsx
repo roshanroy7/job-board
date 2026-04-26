@@ -89,7 +89,7 @@ export default function App() {
   const [filter, setFilter] = useState("All")
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/jobs")
+    fetch("https://job-board-production-681d.up.railway.app/api/jobs")
       .then(res => res.json())
       .then(data => { setJobs(data); setLoading(false) })
   }, [])
