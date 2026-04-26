@@ -1,147 +1,150 @@
+import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-
-const jobs = [
-    {
-        id: 1,
-        title: "Frontend Developer",
-        company: "Stripe",
-        location: "Dublin, Ireland",
-        type: "Full-time",
-        salary: "€65,000 – €80,000",
-        posted: "2 days ago",
-        description: "We are looking for a talented Frontend Developer to join our team at Stripe. You will work on building and maintaining user-facing features for our payments platform used by millions of businesses worldwide.",
-        requirements: [
-            "2+ years of experience with React",
-            "Strong understanding of HTML, CSS, JavaScript",
-            "Experience with REST APIs",
-            "Familiarity with Git and version control",
-        ],
-    },
-    {
-        id: 2,
-        title: "Backend Engineer",
-        company: "Shopify",
-        location: "Remote",
-        type: "Full-time",
-        salary: "€70,000 – €90,000",
-        posted: "1 day ago",
-        description: "Join Shopify as a Backend Engineer and help power the platform that millions of merchants rely on. You will design and build scalable APIs and services.",
-        requirements: [
-            "3+ years of backend development experience",
-            "Proficiency in Node.js or Python",
-            "Experience with PostgreSQL or similar databases",
-            "Understanding of REST API design",
-        ],
-    },
-    {
-        id: 3,
-        title: "React Developer",
-        company: "HubSpot",
-        location: "Dublin, Ireland",
-        type: "Contract",
-        salary: "€50,000 – €60,000",
-        posted: "3 days ago",
-        description: "HubSpot is looking for a React Developer on a contract basis to help build new features for our CRM platform. This is a great opportunity to work with a world-class engineering team.",
-        requirements: [
-            "Strong React and JavaScript skills",
-            "Experience with component libraries",
-            "Good communication skills",
-            "Ability to work independently",
-        ],
-    },
-    {
-        id: 4,
-        title: "Junior Software Engineer",
-        company: "Intercom",
-        location: "Dublin, Ireland",
-        type: "Full-time",
-        salary: "€45,000 – €55,000",
-        posted: "Today",
-        description: "Intercom is hiring a Junior Software Engineer to join our growing engineering team. You will work across the full stack, learning from senior engineers and shipping real features from day one.",
-        requirements: [
-            "Some experience with JavaScript or any programming language",
-            "Eagerness to learn and grow",
-            "Familiarity with Git",
-            "Good problem solving skills",
-        ],
-    },
-]
 
 export default function JobDetail() {
     const { id } = useParams()
     const navigate = useNavigate()
-    const job = jobs.find(j => j.id === parseInt(id))
+    const [job, setJob] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    if (!job) return <p style={{ padding: "40px", textAlign: "center" }}>Job not found.</p>
+    useEffect(() => {
+        fetch(`http://localhost:3001/api/jobs/${id}`)
+            .then(res => res.json())
+            .then(data => { setJob(data); setLoading(false) })
+    }, [id])
+
+    if (loading) return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f7ff" }}>
+            <p style={{ color: "#6b7280", fontSize: "15px" }}>Loading job...</p>
+        </div>
+    )
+
+    if (!job) return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f7ff" }}>
+            <p style={{ color: "#6b7280" }}>Job not found.</p>
+        </div>
+    )
+
+    const avatarHue = job.company.length * 37 % 360
 
     return (
-        <div style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
+        <div style={{ minHeight: "100vh", background: "#f8f7ff", fontFamily: "'Inter', sans-serif" }}>
+
+            {/* Navbar */}
             <div style={{
-                background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "16px 24px",
-                display: "flex", alignItems: "center", justifyContent: "space-between"
+                background: "#fff", borderBottom: "1.5px solid #e5e7eb",
+                padding: "14px 32px", display: "flex", alignItems: "center",
+                justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10
             }}>
-                <h1 style={{ fontSize: "20px", fontWeight: "700", color: "#111" }}>JobBoard</h1>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{
+                        width: "32px", height: "32px", borderRadius: "8px",
+                        background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: "16px"
+                    }}></div>
+                    <span style={{ fontSize: "17px", fontWeight: "800", color: "#111" }}>JobBoard</span>
+                </div>
                 <button
                     onClick={() => navigate("/")}
                     style={{
-                        background: "transparent", color: "#111", border: "1px solid #e5e7eb",
-                        borderRadius: "8px", padding: "8px 16px", fontSize: "13px", cursor: "pointer"
+                        background: "#fff", color: "#6366f1", border: "1.5px solid #6366f1",
+                        borderRadius: "10px", padding: "8px 18px", fontSize: "13px",
+                        cursor: "pointer", fontWeight: "600"
                     }}>
-                    Back to jobs
+                    ← Back to jobs
                 </button>
             </div>
 
-            <div style={{ maxWidth: "720px", margin: "0 auto", padding: "32px 16px" }}>
-                <div style={{
-                    background: "#fff", border: "1px solid #e5e7eb",
-                    borderRadius: "12px", padding: "32px"
-                }}>
-                    <h2 style={{ fontSize: "24px", fontWeight: "700", color: "#111", marginBottom: "6px" }}>
-                        {job.title}
-                    </h2>
-                    <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "16px" }}>
-                        {job.company} · {job.location}
-                    </p>
-
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "24px" }}>
-                        <span style={{
-                            fontSize: "12px", padding: "3px 10px", borderRadius: "20px",
-                            background: "#eff6ff", color: "#1d4ed8", fontWeight: "500"
-                        }}>{job.type}</span>
-                        <span style={{
-                            fontSize: "12px", padding: "3px 10px", borderRadius: "20px",
-                            background: "#f0fdf4", color: "#15803d", fontWeight: "500"
-                        }}>{job.salary}</span>
-                        <span style={{
-                            fontSize: "12px", padding: "3px 10px", borderRadius: "20px",
-                            background: "#f9fafb", color: "#6b7280", fontWeight: "500"
-                        }}>Posted {job.posted}</span>
+            {/* Hero banner */}
+            <div style={{
+                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)",
+                padding: "40px 32px"
+            }}>
+                <div style={{ maxWidth: "760px", margin: "0 auto", display: "flex", alignItems: "center", gap: "20px" }}>
+                    <div style={{
+                        width: "64px", height: "64px", borderRadius: "16px", flexShrink: 0,
+                        background: `hsl(${avatarHue}, 70%, 92%)`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: "28px", fontWeight: "800",
+                        color: `hsl(${avatarHue}, 60%, 35%)`
+                    }}>
+                        {job.company[0]}
                     </div>
+                    <div>
+                        <h1 style={{ fontSize: "26px", fontWeight: "800", color: "#fff", marginBottom: "4px" }}>
+                            {job.title}
+                        </h1>
+                        <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.85)" }}>
+                            {job.company} · {job.location} · Posted {job.posted}
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-                    <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#111", marginBottom: "10px" }}>
+            {/* Content */}
+            <div style={{ maxWidth: "760px", margin: "0 auto", padding: "28px 16px 60px" }}>
+
+                {/* Tags */}
+                <div style={{ display: "flex", gap: "8px", marginBottom: "24px", flexWrap: "wrap" }}>
+                    <span style={{
+                        fontSize: "13px", padding: "5px 14px", borderRadius: "20px",
+                        background: "#e0f2fe", color: "#0369a1", fontWeight: "600"
+                    }}>{job.type}</span>
+                    <span style={{
+                        fontSize: "13px", padding: "5px 14px", borderRadius: "20px",
+                        background: "#f0fdf4", color: "#15803d", fontWeight: "600"
+                    }}> {job.salary}</span>
+                </div>
+
+                {/* About */}
+                <div style={{
+                    background: "#fff", borderRadius: "16px", padding: "28px",
+                    border: "1.5px solid #e5e7eb", marginBottom: "16px",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.04)"
+                }}>
+                    <h2 style={{ fontSize: "17px", fontWeight: "700", color: "#111", marginBottom: "12px" }}>
                         About the role
-                    </h3>
-                    <p style={{ fontSize: "14px", color: "#374151", lineHeight: "1.7", marginBottom: "24px" }}>
+                    </h2>
+                    <p style={{ fontSize: "14px", color: "#374151", lineHeight: "1.8" }}>
                         {job.description}
                     </p>
+                </div>
 
-                    <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#111", marginBottom: "10px" }}>
+                {/* Requirements */}
+                <div style={{
+                    background: "#fff", borderRadius: "16px", padding: "28px",
+                    border: "1.5px solid #e5e7eb", marginBottom: "24px",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.04)"
+                }}>
+                    <h2 style={{ fontSize: "17px", fontWeight: "700", color: "#111", marginBottom: "12px" }}>
                         Requirements
-                    </h3>
-                    <ul style={{ paddingLeft: "20px", marginBottom: "32px" }}>
+                    </h2>
+                    <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
                         {job.requirements.map((req, i) => (
-                            <li key={i} style={{ fontSize: "14px", color: "#374151", lineHeight: "2" }}>{req}</li>
+                            <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: "10px", fontSize: "14px", color: "#374151" }}>
+                                <span style={{
+                                    width: "22px", height: "22px", borderRadius: "50%", flexShrink: 0,
+                                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontSize: "11px", color: "#fff", fontWeight: "700"
+                                }}>✓</span>
+                                {req}
+                            </li>
                         ))}
                     </ul>
-
-                    <button style={{
-                        background: "#111", color: "#fff", border: "none", borderRadius: "8px",
-                        padding: "12px 28px", fontSize: "14px", cursor: "pointer", fontWeight: "500",
-                        width: "100%"
-                    }}>
-                        Apply for this role
-                    </button>
                 </div>
+
+                {/* Apply button */}
+                <button style={{
+                    width: "100%", padding: "16px",
+                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                    color: "#fff", border: "none", borderRadius: "14px",
+                    fontSize: "16px", fontWeight: "700", cursor: "pointer",
+                    boxShadow: "0 4px 16px rgba(99,102,241,0.35)"
+                }}>
+                    Apply for this role 🚀
+                </button>
             </div>
         </div>
     )
