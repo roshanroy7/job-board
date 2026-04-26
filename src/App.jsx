@@ -1,44 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-
-const jobs = [
-  {
-    id: 1,
-    title: "Frontend Developer",
-    company: "Stripe",
-    location: "Dublin, Ireland",
-    type: "Full-time",
-    salary: "€65,000 – €80,000",
-    posted: "2 days ago",
-  },
-  {
-    id: 2,
-    title: "Backend Engineer",
-    company: "Shopify",
-    location: "Remote",
-    type: "Full-time",
-    salary: "€70,000 – €90,000",
-    posted: "1 day ago",
-  },
-  {
-    id: 3,
-    title: "React Developer",
-    company: "HubSpot",
-    location: "Dublin, Ireland",
-    type: "Contract",
-    salary: "€50,000 – €60,000",
-    posted: "3 days ago",
-  },
-  {
-    id: 4,
-    title: "Junior Software Engineer",
-    company: "Intercom",
-    location: "Dublin, Ireland",
-    type: "Full-time",
-    salary: "€45,000 – €55,000",
-    posted: "Today",
-  },
-]
 
 function JobCard({ job }) {
   const navigate = useNavigate()
@@ -90,7 +51,18 @@ function JobCard({ job }) {
 }
 
 export default function App() {
+  const [jobs, setJobs] = useState([])
   const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("http://localhost:3001/api/jobs")
+      .then(res => res.json())
+      .then(data => {
+        setJobs(data)
+        setLoading(false)
+      })
+  }, [])
 
   const filtered = jobs.filter(j =>
     j.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -116,7 +88,7 @@ export default function App() {
           Find your next role
         </h2>
         <p style={{ color: "#6b7280", marginBottom: "24px" }}>
-          {filtered.length} jobs available
+          {loading ? "Loading..." : `${filtered.length} jobs available`}
         </p>
         <input
           type="text"
@@ -130,9 +102,11 @@ export default function App() {
           }}
         />
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {filtered.length > 0
-            ? filtered.map(job => <JobCard key={job.id} job={job} />)
-            : <p style={{ color: "#6b7280", textAlign: "center", padding: "40px" }}>No jobs found.</p>
+          {loading
+            ? <p style={{ color: "#6b7280", textAlign: "center", padding: "40px" }}>Loading jobs...</p>
+            : filtered.length > 0
+              ? filtered.map(job => <JobCard key={job.id} job={job} />)
+              : <p style={{ color: "#6b7280", textAlign: "center", padding: "40px" }}>No jobs found.</p>
           }
         </div>
       </div>
